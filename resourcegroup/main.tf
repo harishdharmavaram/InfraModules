@@ -1,0 +1,28 @@
+provider "azurerm" {
+}
+
+terraform
+{
+backend "azurerm" {}
+}
+
+# Create a resource group
+resource "azurerm_resource_group" "test" {
+  name     = "jda-test-rg"
+  location = "East US"
+}
+
+resource "azurerm_virtual_network" "test" {
+  count               = 2
+  name                = "vnet-${count.index}"
+  location            = "${azurerm_resource_group.test.location}"
+  resource_group_name = "${azurerm_resource_group.test.name}"
+  address_space       = ["${element(var.vnet_address_space, count.index)}"]
+}
+resource "azurerm_subnet" "sub" {
+  count                = "4"
+  name                 = "sub-${count.index}"
+  resource_group_name  = "${azurerm_resource_group.test.name}"
+  virtual_network_name = "${element(azurerm_virtual_network.test.*.name, count.index)}"
+  address_prefix       = "${element(var.subnet_address_prefix, count.index)}"
+}
