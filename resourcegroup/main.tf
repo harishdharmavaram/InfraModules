@@ -1,14 +1,15 @@
 provider "azurerm" {
 }
 
-terraform {
-	backend = "azurerm" {
+terraform { 
+	backend   "azurerm" 
+	{
     storage_account_name  = "jdateststrg"
 	resource_group_name   = "terraform-rg"
     container_name        = "versiontf"
      key                   = "terraform.tfstate"
   }
-
+}
 
 # Create a resource group
 resource "azurerm_resource_group" "test" {
